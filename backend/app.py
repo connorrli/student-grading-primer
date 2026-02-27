@@ -17,11 +17,8 @@ def get_students():
     Route to fetch all students from the database
     return: Array of student objects
     """
-    # TODO: replace with your implementation. This is a mock response
-    return jsonify([
-        {'course': 'COMP1531', 'id': 1, 'mark': 85, 'name': 'Alice Zhang'},
-        {'course': 'COMP1531', 'id': 2, 'mark': 72, 'name': 'Bob Smith'}
-    ]), 200
+
+    return jsonify(db.get_all_students()), 200
 
 
 @app.route("/students", methods=["POST"])
@@ -35,9 +32,20 @@ def create_student():
     """
 
     # Getting the request body - replace with your implementation
-    student_data = request.json
+    try:
+        student_data = request.json
 
-    pass
+        name = student_data["name"]
+        course = student_data["course"]
+        mark = student_data["mark"]
+
+        student = db.insert_student(name, course, mark)
+
+        return jsonify(student), 200
+    except KeyError as e:
+        return jsonify({"error": f"Missing field: {e}"}), 400
+    except Exception as e:
+        return jsonify({"error": f"Some error occurred: {e}"}), 400
 
 
 @app.route("/students/<int:student_id>", methods=["PUT"])
@@ -49,7 +57,21 @@ def update_student(student_id):
     param mark: The mark the student received (from request body)
     return: The updated student if successful
     """
-    pass  # replace with your implementation
+
+    try:
+        student_data = request.json
+
+        name = student_data.get("name")
+        course = student_data.get("course")
+        mark = student_data.get("mark")
+
+        student = db.update_student(student_id, name, course, mark)
+
+        if student is not None:
+            return jsonify(student), 200
+        
+    except Exception as e:
+        return jsonify({"error": f"Some error occured: {e}"}), 400
 
 
 @app.route("/students/<int:student_id>", methods=["DELETE"])
@@ -58,7 +80,10 @@ def delete_student(student_id):
     Route to delete student by id
     return: The deleted student
     """
-    pass  # replace with your implementation
+
+    student = db.delete_student(student_id)
+
+    return jsonify(student), 200
 
 
 @app.route("/stats")
@@ -67,7 +92,16 @@ def get_stats():
     Route to show the stats of all student marks 
     return: An object with the stats (count, average, min, max)
     """
-    pass  # replace with your implementation
+    students = db.get_all_students()
+
+    if len(students) <= 0:
+        return jsonify({ "count": 0, "average": None, "min": None, "max": None })
+    
+    # Having the above prevents divide by 0 error for average, but also just good to have I guess
+    
+    marks = [s["mark"] for s in students]
+    
+    return jsonify({ "count": len(marks), "average": sum(marks) / len(marks), "min": min(marks), "max": max(marks) }), 200
 
 
 @app.route("/")
