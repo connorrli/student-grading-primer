@@ -4,6 +4,7 @@ import StudentForm from './components/StudentForm'
 import StudentTable from './components/StudentTable'
 import EditStudentModal from './components/EditStudentModal'
 import './App.css'
+import Stats from './components/Stats'
 
 export default function App() {
   const [students, setStudents] = useState([])
@@ -68,8 +69,14 @@ export default function App() {
       </header>
 
       <main className="main">
+<<<<<<< HEAD
         <section className="card form-card">
           <h2>Add tutor</h2>
+=======
+        <Stats />
+        <section className="card form-card">
+          <h2>Add a 3900 tutor</h2>
+>>>>>>> eric/stats-feature
           <StudentForm onSubmit={handleCreate} />
         </section>
 
@@ -80,7 +87,11 @@ export default function App() {
         )}
 
         <section className="card table-card">
+<<<<<<< HEAD
           <h2>Tutors</h2>
+=======
+          <h2>Tutor table</h2>
+>>>>>>> eric/stats-feature
           {loading ? (
             <p className="loading">Loading…</p>
           ) : (
