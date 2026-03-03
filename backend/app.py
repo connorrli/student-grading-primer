@@ -37,7 +37,7 @@ def create_student():
 
         name = student_data["name"]
         course = student_data["course"]
-        mark = student_data["mark"]
+        mark = student_data.get("mark", 0)
 
         student = db.insert_student(name, course, mark)
 
@@ -69,7 +69,8 @@ def update_student(student_id):
 
         if student is not None:
             return jsonify(student), 200
-        
+        else:
+            return jsonify({"error": f"Student not found"}), 404
     except Exception as e:
         return jsonify({"error": f"Some error occured: {e}"}), 400
 
@@ -82,8 +83,11 @@ def delete_student(student_id):
     """
 
     student = db.delete_student(student_id)
-
-    return jsonify(student), 200
+    
+    if student is not None:
+        return jsonify(student), 200
+    else:
+        return jsonify({"error": f"Student not found"}), 404
 
 
 @app.route("/stats")
